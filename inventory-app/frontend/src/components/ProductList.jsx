@@ -27,8 +27,9 @@ export default function ProductList({
             <th>Name</th>
             <th>Category</th>
             <th>Description</th>
-            <th className="text-right">Price</th>
+            <th className="text-right">Price/pcs</th>
             <th className="text-center">Qty</th>
+            <th className="text-right">Total</th>
             <th className="text-center">Actions</th>
           </tr>
         </thead>
@@ -36,7 +37,7 @@ export default function ProductList({
           {products.map((product) =>
             editingProduct && editingProduct.id === product.id ? (
               <tr key={product.id} className="editing-row">
-                <td colSpan={7}>
+                <td colSpan={8}>
                   <div className="inline-edit-panel">
                     <h3>Edit Product</h3>
                     <ProductForm
@@ -68,7 +69,7 @@ export default function ProductList({
                 <td className="description-cell" data-label="Description">
                   {product.description || <span className="muted">—</span>}
                 </td>
-                <td className="text-right price-cell" data-label="Price">
+                <td className="text-right price-cell" data-label="Price/pcs">
                   ${Number(product.price).toFixed(2)}
                 </td>
                 <td className="text-center qty-cell-control" data-label="Qty">
@@ -88,6 +89,9 @@ export default function ProductList({
                       aria-label="Increase quantity"
                     >+</button>
                   </div>
+                </td>
+                <td className="text-right price-cell" data-label="Total">
+                  ${(product.price * product.quantity).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </td>
                 <td className="text-center actions-cell" data-label="Actions">
                   <button

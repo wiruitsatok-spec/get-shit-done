@@ -98,6 +98,11 @@ export default function App() {
         <div className="header-content">
           <h1>Inventory Manager</h1>
           <span className="product-count">{products.length} product{products.length !== 1 ? 's' : ''}</span>
+          {!loading && (
+            <span className="inventory-total">
+              Total: ${products.reduce((sum, p) => sum + p.price * p.quantity, 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            </span>
+          )}
         </div>
       </header>
 

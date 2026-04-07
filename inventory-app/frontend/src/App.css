@@ -53,6 +53,16 @@ body {
   border-radius: 20px;
 }
 
+.inventory-total {
+  font-size: 14px;
+  font-weight: 600;
+  color: #69db7c;
+  background: rgba(255,255,255,0.08);
+  padding: 2px 12px;
+  border-radius: 20px;
+  margin-left: auto;
+}
+
 .app-main {
   max-width: 1200px;
   width: 100%;
