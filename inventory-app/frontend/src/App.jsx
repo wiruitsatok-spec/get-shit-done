@@ -123,6 +123,10 @@ export default function App() {
   };
 
   const cartCount = Object.values(cart).reduce((s, q) => s + q, 0);
+  const cartTotal = Object.entries(cart).reduce((s, [id, qty]) => {
+    const p = products.find((p) => p.id === id);
+    return s + (p ? p.price * qty : 0);
+  }, 0);
   const inventoryTotal = products.reduce((sum, p) => sum + p.price * p.quantity, 0);
 
   return (
@@ -149,7 +153,7 @@ export default function App() {
                 ⚙ Manager
               </button>
               <button className="btn btn-cart" onClick={() => setShowCart(true)}>
-                🛒 Cart{cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
+                🛒{cartCount > 0 && <span className="cart-badge">{cartCount}</span>}
               </button>
             </>
           )}
@@ -212,6 +216,23 @@ export default function App() {
           )
         )}
       </main>
+
+      {mode === 'customer' && (
+        <button
+          className={`floating-cart-btn ${cartCount > 0 ? 'has-items' : ''}`}
+          onClick={() => setShowCart(true)}
+        >
+          <span className="floating-cart-icon">🛒</span>
+          {cartCount > 0 ? (
+            <>
+              <span className="floating-cart-count">{cartCount} item{cartCount !== 1 ? 's' : ''}</span>
+              <span className="floating-cart-total">${cartTotal.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</span>
+            </>
+          ) : (
+            <span className="floating-cart-count">Cart is empty</span>
+          )}
+        </button>
+      )}
 
       {showCart && (
         <Cart

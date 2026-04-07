@@ -220,6 +220,57 @@ body {
   text-align: center;
 }
 
+/* ===== Floating Cart Button ===== */
+.floating-cart-btn {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 24px;
+  border-radius: 50px;
+  border: none;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+  transition: transform 0.2s, box-shadow 0.2s, background 0.2s;
+  white-space: nowrap;
+  background: #495057;
+  color: #fff;
+}
+
+.floating-cart-btn.has-items {
+  background: #3b5bdb;
+}
+
+.floating-cart-btn:hover {
+  transform: translateX(-50%) translateY(-2px);
+  box-shadow: 0 6px 24px rgba(0,0,0,0.3);
+}
+
+.floating-cart-icon { font-size: 20px; }
+
+.floating-cart-count {
+  opacity: 0.9;
+  font-weight: 500;
+}
+
+.floating-cart-total {
+  font-size: 17px;
+  font-weight: 700;
+  padding-left: 8px;
+  border-left: 1px solid rgba(255,255,255,0.3);
+}
+
+/* add bottom padding to shop so content isn't hidden behind floating button */
+.app-main:has(~ .floating-cart-btn) {
+  padding-bottom: 90px;
+}
+
 /* ===== Cart Panel ===== */
 .cart-overlay {
   position: fixed;
