@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default function CustomerView({ products, cart, onAddToCart }) {
+export default function CustomerView({ products, cart, onAddToCart, onUpdateCartQty, onRemoveFromCart }) {
   const available = products.filter((p) => p.quantity > 0);
 
   if (available.length === 0) {
@@ -41,13 +41,28 @@ export default function CustomerView({ products, cart, onAddToCart }) {
                   <span className="stock-out">Out of stock</span>
                 )}
               </div>
-              <button
-                className="btn btn-primary btn-add-cart"
-                onClick={() => onAddToCart(product.id)}
-                disabled={remaining <= 0}
-              >
-                {inCart > 0 ? `In cart: ${inCart} — Add more` : 'Add to Cart'}
-              </button>
+              {inCart > 0 ? (
+                <div className="shop-card-qty-controls">
+                  <button
+                    className="qty-btn qty-btn-lg"
+                    onClick={() => inCart <= 1 ? onRemoveFromCart(product.id) : onUpdateCartQty(product.id, inCart - 1)}
+                  >−</button>
+                  <span className="qty-value qty-value-lg">{inCart}</span>
+                  <button
+                    className="qty-btn qty-btn-lg"
+                    onClick={() => onAddToCart(product.id)}
+                    disabled={remaining <= 0}
+                  >+</button>
+                </div>
+              ) : (
+                <button
+                  className="btn btn-primary btn-add-cart"
+                  onClick={() => onAddToCart(product.id)}
+                  disabled={remaining <= 0}
+                >
+                  Add to Cart
+                </button>
+              )}
             </div>
           </div>
         );

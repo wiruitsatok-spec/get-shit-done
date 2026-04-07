@@ -202,7 +202,13 @@ export default function App() {
           loading ? (
             <div className="loading">Loading products...</div>
           ) : (
-            <CustomerView products={products} cart={cart} onAddToCart={handleAddToCart} />
+            <CustomerView
+              products={products}
+              cart={cart}
+              onAddToCart={handleAddToCart}
+              onUpdateCartQty={handleUpdateCartQty}
+              onRemoveFromCart={handleRemoveFromCart}
+            />
           )
         )}
       </main>
