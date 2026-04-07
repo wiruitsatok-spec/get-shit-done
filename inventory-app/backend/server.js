@@ -117,6 +117,6 @@ app.delete('/api/products/:id', (req, res) => {
   res.status(204).send();
 });
 
-app.listen(PORT, () => {
-  console.log(`Inventory API running at http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`Inventory API running at http://0.0.0.0:${PORT}`);
 });
