@@ -9,9 +9,8 @@ services:
       - key: NODE_ENV
         value: production
 
-  - type: web
+  - type: static
     name: inventory-frontend
-    runtime: static
     rootDir: inventory-app/frontend
     buildCommand: npm install && npm run build
     staticPublishPath: dist
