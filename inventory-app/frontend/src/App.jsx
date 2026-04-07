@@ -83,6 +83,15 @@ export default function App() {
     setShowAddForm(false);
   };
 
+  const handleQuantityChange = async (id, newQty) => {
+    if (newQty < 0) return;
+    const updated = await apiFetch(`${API_BASE}/${id}`, {
+      method: 'PUT',
+      body: JSON.stringify({ quantity: newQty }),
+    });
+    setProducts((prev) => prev.map((p) => (p.id === id ? updated : p)));
+  };
+
   return (
     <div className="app">
       <header className="app-header">
@@ -131,6 +140,7 @@ export default function App() {
             onDelete={handleDelete}
             onUpdateSubmit={handleUpdate}
             onCancelEdit={handleCancelEdit}
+            onQuantityChange={handleQuantityChange}
           />
         )}
       </main>

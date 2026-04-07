@@ -6,6 +6,7 @@ const EMPTY_FORM = {
   price: '',
   quantity: '',
   category: '',
+  image: null,
 };
 
 export default function ProductForm({ initialData, onSubmit, onCancel, submitLabel = 'Save' }) {
@@ -15,6 +16,7 @@ export default function ProductForm({ initialData, onSubmit, onCancel, submitLab
     price: initialData.price !== undefined ? String(initialData.price) : '',
     quantity: initialData.quantity !== undefined ? String(initialData.quantity) : '',
     category: initialData.category || '',
+    image: initialData.image || null,
   } : EMPTY_FORM);
   const [errors, setErrors] = useState({});
   const [submitting, setSubmitting] = useState(false);
@@ -38,6 +40,18 @@ export default function ProductForm({ initialData, onSubmit, onCancel, submitLab
     if (errors[name]) setErrors((prev) => ({ ...prev, [name]: undefined }));
   };
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (ev) => setForm((prev) => ({ ...prev, image: ev.target.result }));
+    reader.readAsDataURL(file);
+  };
+
+  const handleRemoveImage = () => {
+    setForm((prev) => ({ ...prev, image: null }));
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const validationErrors = validate();
@@ -55,6 +69,7 @@ export default function ProductForm({ initialData, onSubmit, onCancel, submitLab
         price: Number(form.price),
         quantity: Math.floor(Number(form.quantity)),
         category: form.category.trim(),
+        image: form.image,
       });
     } catch (err) {
       setSubmitError(err.message || 'Failed to save product');
@@ -67,6 +82,29 @@ export default function ProductForm({ initialData, onSubmit, onCancel, submitLab
     <form className="product-form" onSubmit={handleSubmit} noValidate>
       {submitError && <div className="form-error-banner">{submitError}</div>}
 
+      <div className="form-group">
+        <label>Photo</label>
+        {form.image ? (
+          <div className="image-preview-wrapper">
+            <img src={form.image} alt="Product" className="image-preview" />
+            <button type="button" className="btn btn-secondary btn-sm" onClick={handleRemoveImage}>
+              Remove photo
+            </button>
+          </div>
+        ) : (
+          <label className="image-upload-label">
+            <input
+              type="file"
+              accept="image/*"
+              capture="environment"
+              onChange={handleImageChange}
+              className="image-upload-input"
+            />
+            📷 Take photo or choose from gallery
+          </label>
+        )}
+      </div>
+
       <div className="form-row">
         <div className={`form-group ${errors.name ? 'has-error' : ''}`}>
           <label htmlFor="name">Name *</label>
@@ -77,7 +115,6 @@ export default function ProductForm({ initialData, onSubmit, onCancel, submitLab
             value={form.name}
             onChange={handleChange}
             placeholder="Product name"
-            autoFocus
           />
           {errors.name && <span className="field-error">{errors.name}</span>}
         </div>

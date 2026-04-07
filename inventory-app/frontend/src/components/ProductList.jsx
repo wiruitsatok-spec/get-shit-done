@@ -8,6 +8,7 @@ export default function ProductList({
   onDelete,
   onUpdateSubmit,
   onCancelEdit,
+  onQuantityChange,
 }) {
   if (products.length === 0) {
     return (
@@ -22,11 +23,12 @@ export default function ProductList({
       <table className="product-table">
         <thead>
           <tr>
+            <th></th>
             <th>Name</th>
             <th>Category</th>
             <th>Description</th>
             <th className="text-right">Price</th>
-            <th className="text-right">Qty</th>
+            <th className="text-center">Qty</th>
             <th className="text-center">Actions</th>
           </tr>
         </thead>
@@ -34,7 +36,7 @@ export default function ProductList({
           {products.map((product) =>
             editingProduct && editingProduct.id === product.id ? (
               <tr key={product.id} className="editing-row">
-                <td colSpan={6}>
+                <td colSpan={7}>
                   <div className="inline-edit-panel">
                     <h3>Edit Product</h3>
                     <ProductForm
@@ -48,6 +50,13 @@ export default function ProductList({
               </tr>
             ) : (
               <tr key={product.id} className={editingProduct ? 'dimmed' : ''}>
+                <td className="thumb-cell" data-label="">
+                  {product.image ? (
+                    <img src={product.image} alt={product.name} className="product-thumb" />
+                  ) : (
+                    <div className="product-thumb-placeholder">📦</div>
+                  )}
+                </td>
                 <td className="product-name" data-label="Name">{product.name}</td>
                 <td data-label="Category">
                   {product.category ? (
@@ -62,8 +71,23 @@ export default function ProductList({
                 <td className="text-right price-cell" data-label="Price">
                   ${Number(product.price).toFixed(2)}
                 </td>
-                <td className={`text-right qty-cell ${product.quantity === 0 ? 'qty-zero' : product.quantity < 10 ? 'qty-low' : ''}`} data-label="Qty">
-                  {product.quantity}
+                <td className="text-center qty-cell-control" data-label="Qty">
+                  <div className="qty-controls">
+                    <button
+                      className="qty-btn"
+                      onClick={() => onQuantityChange(product.id, product.quantity - 1)}
+                      disabled={product.quantity <= 0}
+                      aria-label="Decrease quantity"
+                    >−</button>
+                    <span className={`qty-value ${product.quantity === 0 ? 'qty-zero' : product.quantity < 10 ? 'qty-low' : ''}`}>
+                      {product.quantity}
+                    </span>
+                    <button
+                      className="qty-btn"
+                      onClick={() => onQuantityChange(product.id, product.quantity + 1)}
+                      aria-label="Increase quantity"
+                    >+</button>
+                  </div>
                 </td>
                 <td className="text-center actions-cell" data-label="Actions">
                   <button

@@ -44,7 +44,7 @@ app.get('/api/products', (req, res) => {
 
 // POST /api/products - create product
 app.post('/api/products', (req, res) => {
-  const { name, description, price, quantity, category } = req.body;
+  const { name, description, price, quantity, category, image } = req.body;
 
   if (!name || name.trim() === '') {
     return res.status(400).json({ error: 'Name is required' });
@@ -63,6 +63,7 @@ app.post('/api/products', (req, res) => {
     price: Number(Number(price).toFixed(2)),
     quantity: Math.floor(Number(quantity)),
     category: (category || '').trim(),
+    image: image || null,
   };
 
   products.push(product);
@@ -78,7 +79,7 @@ app.put('/api/products/:id', (req, res) => {
     return res.status(404).json({ error: 'Product not found' });
   }
 
-  const { name, description, price, quantity, category } = req.body;
+  const { name, description, price, quantity, category, image } = req.body;
 
   if (name !== undefined && name.trim() === '') {
     return res.status(400).json({ error: 'Name cannot be empty' });
@@ -98,6 +99,7 @@ app.put('/api/products/:id', (req, res) => {
     price: price !== undefined ? Number(Number(price).toFixed(2)) : existing.price,
     quantity: quantity !== undefined ? Math.floor(Number(quantity)) : existing.quantity,
     category: category !== undefined ? category.trim() : existing.category,
+    image: image !== undefined ? image : existing.image,
   };
 
   products[index] = updated;
