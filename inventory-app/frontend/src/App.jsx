@@ -2,7 +2,9 @@ import React, { useState, useEffect, useCallback } from 'react';
 import ProductList from './components/ProductList.jsx';
 import ProductForm from './components/ProductForm.jsx';
 
-const API_BASE = '/api/products';
+const API_BASE = import.meta.env.VITE_API_URL
+  ? `https://${import.meta.env.VITE_API_URL}/api/products`
+  : '/api/products';
 
 async function apiFetch(url, options = {}) {
   const res = await fetch(url, {

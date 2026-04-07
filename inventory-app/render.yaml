@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: inventory-backend
+    runtime: node
+    rootDir: inventory-app/backend
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+
+  - type: web
+    name: inventory-frontend
+    runtime: static
+    rootDir: inventory-app/frontend
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          name: inventory-backend
+          type: web
+          property: host
