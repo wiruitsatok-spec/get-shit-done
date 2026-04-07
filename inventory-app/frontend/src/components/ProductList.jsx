@@ -48,24 +48,24 @@ export default function ProductList({
               </tr>
             ) : (
               <tr key={product.id} className={editingProduct ? 'dimmed' : ''}>
-                <td className="product-name">{product.name}</td>
-                <td>
+                <td className="product-name" data-label="Name">{product.name}</td>
+                <td data-label="Category">
                   {product.category ? (
                     <span className="badge">{product.category}</span>
                   ) : (
                     <span className="muted">—</span>
                   )}
                 </td>
-                <td className="description-cell">
+                <td className="description-cell" data-label="Description">
                   {product.description || <span className="muted">—</span>}
                 </td>
-                <td className="text-right price-cell">
+                <td className="text-right price-cell" data-label="Price">
                   ${Number(product.price).toFixed(2)}
                 </td>
-                <td className={`text-right qty-cell ${product.quantity === 0 ? 'qty-zero' : product.quantity < 10 ? 'qty-low' : ''}`}>
+                <td className={`text-right qty-cell ${product.quantity === 0 ? 'qty-zero' : product.quantity < 10 ? 'qty-low' : ''}`} data-label="Qty">
                   {product.quantity}
                 </td>
-                <td className="text-center actions-cell">
+                <td className="text-center actions-cell" data-label="Actions">
                   <button
                     className="btn btn-sm btn-edit"
                     onClick={() => onEdit(product)}
