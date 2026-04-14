@@ -118,18 +118,25 @@ analyzeBtn.addEventListener('click', async () => {
 
       const paras = response.paragraphs;
       const words = paras.join(' ').split(/\s+/).filter(Boolean);
-      const score = scoreText(paras);
-      const conf  = score >= 67 || score <= 33 ? 'High' : 'Medium';
 
-      setScore(score);
-      paraCount.textContent = paras.length;
-      wordCount.textContent = words.length >= 1000
-        ? `${(words.length / 1000).toFixed(1)}k`
-        : words.length;
-      confidence.textContent = conf;
+      // Ask background.js to call Sapling; fall back to local heuristic.
+      chrome.runtime.sendMessage({ action: 'getAiScore', paragraphs: paras }, (aiResp) => {
+        const score = (aiResp && typeof aiResp.score === 'number')
+          ? aiResp.score
+          : scoreText(paras);
+        const conf = score >= 67 || score <= 33 ? 'High' : 'Medium';
 
-      status.textContent = `Analyzed ${paras.length} paragraph${paras.length !== 1 ? 's' : ''}.`;
-      analyzeBtn.disabled = false;
+        setScore(score);
+        paraCount.textContent = paras.length;
+        wordCount.textContent = words.length >= 1000
+          ? `${(words.length / 1000).toFixed(1)}k`
+          : words.length;
+        confidence.textContent = conf;
+
+        const src = (aiResp && aiResp.score != null) ? 'Sapling AI' : 'local heuristic';
+        status.textContent = `Analyzed ${paras.length} paragraph${paras.length !== 1 ? 's' : ''} via ${src}.`;
+        analyzeBtn.disabled = false;
+      });
     });
   } catch (err) {
     status.textContent = `Error: ${err.message}`;
