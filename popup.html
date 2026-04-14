@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>AI Probability Detector</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      width: 320px;
+      min-height: 360px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0f0f13;
+      color: #e2e8f0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 20px 20px;
+      gap: 20px;
+    }
+
+    h1 {
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #94a3b8;
+    }
+
+    /* ── Gauge ── */
+    .gauge-wrap {
+      position: relative;
+      width: 200px;
+      height: 110px;
+      overflow: visible;
+    }
+
+    .gauge-wrap svg {
+      overflow: visible;
+    }
+
+    #arc-bg {
+      stroke: #1e2030;
+    }
+
+    #arc-fill {
+      stroke: #22c55e;
+      transition: stroke-dasharray 0.6s cubic-bezier(.4,0,.2,1),
+                  stroke 0.4s ease;
+    }
+
+    .gauge-score {
+      position: absolute;
+      bottom: -2px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      line-height: 1;
+    }
+
+    .gauge-score .pct {
+      font-size: 42px;
+      font-weight: 700;
+      letter-spacing: -2px;
+      color: #f1f5f9;
+    }
+
+    .gauge-score .pct-sym {
+      font-size: 20px;
+      font-weight: 500;
+      color: #94a3b8;
+      vertical-align: super;
+    }
+
+    .gauge-label {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #475569;
+      margin-top: 4px;
+    }
+
+    /* ── Verdict badge ── */
+    .verdict {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 14px;
+      border-radius: 99px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.04em;
+      background: rgba(34,197,94,0.12);
+      color: #22c55e;
+      border: 1px solid rgba(34,197,94,0.25);
+      transition: background 0.4s, color 0.4s, border-color 0.4s;
+    }
+
+    .verdict.yellow {
+      background: rgba(234,179,8,0.12);
+      color: #eab308;
+      border-color: rgba(234,179,8,0.25);
+    }
+
+    .verdict.red {
+      background: rgba(239,68,68,0.12);
+      color: #ef4444;
+      border-color: rgba(239,68,68,0.25);
+    }
+
+    .verdict .dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    /* ── Stats row ── */
+    .stats {
+      display: flex;
+      gap: 10px;
+      width: 100%;
+    }
+
+    .stat {
+      flex: 1;
+      background: #161620;
+      border: 1px solid #1e2030;
+      border-radius: 10px;
+      padding: 10px 12px;
+      text-align: center;
+    }
+
+    .stat .val {
+      font-size: 18px;
+      font-weight: 700;
+      color: #f1f5f9;
+    }
+
+    .stat .lbl {
+      font-size: 10px;
+      color: #475569;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-top: 2px;
+    }
+
+    /* ── Button ── */
+    button {
+      width: 100%;
+      padding: 11px;
+      border: none;
+      border-radius: 10px;
+      background: #3b82f6;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    button:hover { background: #2563eb; }
+    button:active { transform: scale(0.98); }
+    button:disabled { background: #1e2030; color: #475569; cursor: not-allowed; transform: none; }
+
+    /* ── Status line ── */
+    #status {
+      font-size: 11px;
+      color: #475569;
+      text-align: center;
+      min-height: 16px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>AI Probability Detector</h1>
+
+  <div class="gauge-wrap">
+    <svg width="200" height="110" viewBox="0 0 200 110">
+      <!-- background arc -->
+      <path id="arc-bg"
+        d="M 10 100 A 90 90 0 0 1 190 100"
+        fill="none" stroke-width="14" stroke-linecap="round"/>
+      <!-- fill arc -->
+      <path id="arc-fill"
+        d="M 10 100 A 90 90 0 0 1 190 100"
+        fill="none" stroke-width="14" stroke-linecap="round"
+        stroke-dasharray="0 283"/>
+    </svg>
+    <div class="gauge-score">
+      <span class="pct" id="score-num">0</span><span class="pct-sym">%</span>
+      <div class="gauge-label">AI Probability</div>
+    </div>
+  </div>
+
+  <div class="verdict" id="verdict">
+    <span class="dot"></span>
+    <span id="verdict-text">Human Written</span>
+  </div>
+
+  <div class="stats">
+    <div class="stat">
+      <div class="val" id="para-count">—</div>
+      <div class="lbl">Paragraphs</div>
+    </div>
+    <div class="stat">
+      <div class="val" id="word-count">—</div>
+      <div class="lbl">Words</div>
+    </div>
+    <div class="stat">
+      <div class="val" id="confidence">—</div>
+      <div class="lbl">Confidence</div>
+    </div>
+  </div>
+
+  <button id="analyze-btn">Analyze Page</button>
+  <div id="status">Click Analyze to scan the current page.</div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
